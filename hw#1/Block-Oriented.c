@@ -26,7 +26,6 @@ int main(void){
 	j=4;
 	printf("%d %s\n",N,Block);
 	for(i=0;i<N;i++){
-		printf("%d\n",i);
 		fgets(input,100,fp); 
 		pointer = strtok(input,",");
 		memset(name,0,20);
