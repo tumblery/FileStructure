@@ -5,26 +5,13 @@
 #define BlockSize 4096
 #define RecordSize 32
 
-typedef struct student{
-	unsigned long ID;
-	char name[20];
-	float score;
-	int age;
-}ST;
-typedef struct Block_S{
-	int b_num;
-	ST students[127];
-}Bl;
-
 int main(void){
 	unsigned long int id,bl_id;
 	char name[20];
 	float score;
 	int age;
-	char input[100],getId[100],data[33],NULL_data[21];
+	char input[100];
 	char* pointer,*idP;
-	char** str_list;
-	char* str_tmp;
 	unsigned char Block[BlockSize];
 	int j,i,N,block_num,record;
 
@@ -35,8 +22,6 @@ int main(void){
 	fgets(input,100,fp);
 	block_num = 0;
 	record =0;
-	str_tmp = (char *)malloc(sizeof(char)*100);
-	memset(NULL_data,0,32);
 	memset(Block,0,4096);
 	j=4;
 	printf("%d %s\n",N,Block);
@@ -52,7 +37,6 @@ int main(void){
 			Block[j+strlen(name)+k] = 0;
 		}
 		j+=20;
-//		printf("%s\n",name);
 		pointer = strtok(NULL,",");
 		id = strtoul(pointer,&idP,10);
 		memcpy(&Block[j],&id,sizeof(unsigned long));
@@ -77,11 +61,13 @@ int main(void){
 			block_num++;
 		}
 	}
+	memcpy(&Block[0],&block_num,sizeof(int));
 	fseek(out,4096*block_num,SEEK_SET);
 	fwrite(Block,sizeof(char),BlockSize,out);
 	
 	fclose(fp);
 	fclose(out);
+
 	int flag,cnt;
 	fp = fopen("out_student.dat","rb");
 	
@@ -92,7 +78,7 @@ int main(void){
 		if(id == 0) break;
 		fseek(fp,0L,SEEK_SET);
 		while(fread(Block,1,4096,fp) >0){
-			block_num = Block[0];
+			memcpy(&block_num,&Block,sizeof(int));
 			i=4;
 			while(i < 4096){
 				i +=20;
@@ -104,7 +90,7 @@ int main(void){
 						name[j] = Block[i];
 						i++;
 					}
-					printf("%lu's name is %s\n",id,name);
+					printf("%lu's name is %s\n%s's Block num is %d\n",id,name,name,block_num);
 				}
 				i+=12;
 			}
